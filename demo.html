@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body {
+    height: 100vh; margin: 0;
+    display: grid; place-items: center;
+    background: #0b0b0f;
+  }
+
+  .ka-pian {
+    position: relative;
+    width: 360px; height: 240px;
+    border-radius: 24px;
+    background: rgba(30, 30, 40, 0.7);
+    overflow: hidden;                     /* 光晕不溢出 */
+    transform: perspective(1000px) rotateX(0) rotateY(0);
+    transition: transform 0.5s;           /* 回正动画 */
+    will-change: transform;
+  }
+  .ka-pian:hover { transition: transform 0.1s; }  /* 悬停时跟手更快 */
+
+  .guang-yun {
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #9353d3, #7828c8);
+    filter: blur(80px);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .ka-pian:hover .guang-yun { opacity: 0.7; }
+
+  .nei-rong {
+    position: relative; z-index: 1;
+    color: #fff; text-align: center;
+    line-height: 240px; font-size: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="ka-pian" id="kaPian">
+  <div class="guang-yun" id="guangYun"></div>
+  <div class="nei-rong">Web Login</div>
+</div>
+
+<script>
+  const kaPian  = document.getElementById('kaPian');
+  const guangYun = document.getElementById('guangYun');
+
+  const ZUI_DA_QING_XIE = 12;   // 最大倾斜角度
+  const GUANG_YUN_BAN_JING = 90; // 光晕半径（180/2）
+
+  // 鼠标在卡片上移动：计算位置 → 旋转卡片 + 移动光晕
+  kaPian.addEventListener('mousemove', (shiJian) => {
+    const kuang = kaPian.getBoundingClientRect();
+
+    // 鼠标相对卡片左上角的坐标
+    const x = shiJian.clientX - kuang.left;
+    const y = shiJian.clientY - kuang.top;
+
+    // 归一化到 -0.5 ~ 0.5，中心为 0
+    const pianYiX = x / kuang.width  - 0.5;
+    const pianYiY = y / kuang.height - 0.5;
+
+    // 1. 倾斜卡片：rotateX 用负 y，rotateY 用正 x，方向才跟手
+    kaPian.style.transform =
+      `perspective(1000px)
+       rotateX(${-pianYiY * ZUI_DA_QING_XIE}deg)
+       rotateY(${ pianYiX * ZUI_DA_QING_XIE}deg)`;
+
+    // 2. 光晕跟随：减去半径让它居中在鼠标下
+    guangYun.style.left = (x - GUANG_YUN_BAN_JING) + 'px';
+    guangYun.style.top  = (y - GUANG_YUN_BAN_JING) + 'px';
+  });
+
+  // 鼠标离开：回正卡片，光晕归位
+  kaPian.addEventListener('mouseleave', () => {
+    kaPian.style.transform =
+      'perspective(1000px) rotateX(0) rotateY(0)';
+    guangYun.style.left = '90px';
+    guangYun.style.top  = '30px';
+  });
+</script>
+
+</body>
+</html>
