@@ -1,4 +1,4 @@
-🔗 在线预览：https://iamyoungHINA.github.io/card-wave/
+🔗 在线预览：https://iamyoungHINA.github.io/card-wave/demo.html
 # 卡片跟随鼠标倾斜 + 光晕效果
 
 一个HTML/CSS/JS 小项目。
